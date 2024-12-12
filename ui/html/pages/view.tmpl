@@ -1,0 +1,72 @@
+{{define "title"}}
+Forum #{{.Form.ID}}
+{{end}}
+
+{{define "main"}}
+<div class='snippet'>
+  <div class='metadata'>
+    <strong>{{.Form.Title}}</strong>
+    <span>#{{.Form.Author}}</span>
+  </div>
+  <pre><code>{{.Form.Content}}</code></pre>
+  <div class='metadata'>
+    <time>Created: {{.Form.CreatedAtStr}}</time>
+    <span>Tags: {{range .Form.Categories}}#{{.Title}} {{end}}</span>
+  </div>
+</div>
+<form method="post" action='/posts/reaction?id={{.Form.ID}}'>
+  <div class='metadata'>
+    <button class="btn reaction-btn-like {{if .Form.Likes.Actioned}}btn-active-like{{end}}" name="action" value="like"
+      id="green">
+      <i class="fa fa-heart fa-lg" aria-hidden="true"></i>
+      <span class="reaction-count">{{.Form.Likes.Actions}}</span>
+    </button>
+
+    <button class="btn reaction-btn-dislike {{if .Form.Dislikes.Actioned}}btn-active-dislike{{end}}" name="action"
+      value="dislike" id="red">
+      <i class="fa fa-heart-broken fa-lg" aria-hidden="true"></i>
+      <span class="reaction-count">{{.Form.Dislikes.Actions}}</span>
+    </button>
+  </div>
+</form>
+
+<form method="post" action='/comments?id={{.Form.ID}}'>
+  <div class="comment-container">
+    <h2>Leave a Comment</h2>
+    <textarea id="content" name='content' placeholder="Write your comment here..."></textarea>
+    <button id="submitComment">SUBMIT</button>
+    <div id="commentList"></div>
+  </div>
+</form>
+
+{{range .Form.Comments}}
+<div class="comment-container">
+  <div class="metadata">
+    <strong>{{.Author}}</strong>
+
+  </div>
+  <pre><code>{{.Content}}</code></pre>
+  <div class="metadata">
+    <time>Created: {{.CreatedAtStr}}</time>
+  </div>
+</div>
+<form method="post" action='/comments/reaction?post_id={{.PostID}}&comment_id={{.ID}}'>
+  <div class='metadata'>
+    <button class="btn reaction-btn-like {{if .Likes.Actioned}}btn-active-like{{end}}" name="action" value="like"
+      id="green">
+      <i class="fa fa-heart fa-lg" aria-hidden="true"></i>
+      <span class="reaction-count">{{.Likes.Actions}}</span>
+    </button>
+
+    <button class="btn reaction-btn-dislike {{if .Dislikes.Actioned}}btn-active-dislike{{end}}" name="action"
+      value="dislike" id="red">
+      <i class="fa fa-heart-broken fa-lg" aria-hidden="true"></i>
+      <span class="reaction-count">{{.Dislikes.Actions}}</span>
+    </button>
+  </div>
+</form>
+
+
+{{end}}
+
+{{end}}

@@ -1,0 +1,11 @@
+{{define "title"}}
+Error {{.Form.Code}}
+{{end}}
+
+{{define "main"}}
+<div class="error-container">
+  <h1>Ошибка</h1>
+  <p class="error-message">Произошла ошибка: {{.Form.Message}}</p>
+  <p>Код ошибки: {{.Form.Code}}</p>
+</div>
+{{end}}

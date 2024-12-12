@@ -1,0 +1,35 @@
+{{define "title"}}Create a New Forum{{end}}
+{{define "main"}}
+<div class="container">
+    <h2>Create a New post </h2>
+    <form action='/posts/create' method='POST'>
+        <div class="form-group">
+            <label for="title">Title:</label>
+
+            <input type='text' class="form-control" id="title" name='title'>
+        </div>
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name='content'></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Tags:</label>
+            {{if .Form}}
+
+            {{range .Form}}
+            <input class="form-check-input" type='checkbox' name='catigoria' value='{{.ID}}' id="{{.ID}}">
+            <label class="form-check-label" for="{{.ID}}">{{.Title}}</label>
+            {{end}}
+
+            {{else}}
+            <p>Catigories not found</p>
+            {{end}}
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Publish post</button>
+        </div>
+    </form>
+</div>
+{{end}}

@@ -64,6 +64,7 @@ func main() {
 		sessions,
 		comments,
 		commentReactions,
+		config.fileStorage,
 	)
 	//Инициализация HTTP-обработчиков
 	handler := ports.NewHandler(svc)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"mime/multipart"
 	"net/http"
 	"time"
 )
@@ -19,6 +20,13 @@ type TemplateData struct {
 	IsAuthN     bool
 	Form        any
 	Errors      map[string]string
+}
+
+type File struct {
+	FileName    string
+	FileReader  multipart.File
+	FileSize    int64
+	ContentType string
 }
 
 func GetTmplData(form any, isAuthN bool) *TemplateData {
@@ -47,4 +55,27 @@ func Render(w http.ResponseWriter, status int, page string, data *TemplateData) 
 
 	w.WriteHeader(status)
 	buf.WriteTo(w)
+}
+
+func FileFromForm(r *http.Request, key string) (_ *File, err error) {
+	files := r.MultipartForm.File[key]
+	if len(files) == 0 {
+		return nil, nil
+	}
+
+	return getFile(files[0])
+}
+
+func getFile(fh *multipart.FileHeader) (*File, error) {
+	file, err := fh.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	return &File{
+		FileName:    fh.Filename,
+		FileSize:    fh.Size,
+		FileReader:  file,
+		ContentType: fh.Header.Get("Content-Type"),
+	}, nil
 }

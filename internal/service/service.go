@@ -33,11 +33,13 @@ type service struct {
 	users            domain.UsersRepository
 	posts            domain.PostsRepository
 	categories       domain.CategoriesRepository
+	
 	postCategories   domain.PostCategoriesRepository
 	postReactions    domain.PostReactionsRepository
 	sessions         domain.SessionsRepository
 	comments         domain.CommentsRepository
 	commentReactions domain.CommentReactionsRepository
+	fileStorage 	 string
 }
 
 func NewService(
@@ -49,6 +51,7 @@ func NewService(
 	sessions domain.SessionsRepository,
 	comments domain.CommentsRepository,
 	commentReactions domain.CommentReactionsRepository,
+	fileStorage string,
 ) Service {
 	return &service{
 		users:            users,
@@ -59,5 +62,6 @@ func NewService(
 		sessions:         sessions,
 		comments:         comments,
 		commentReactions: commentReactions,
+		fileStorage: 	  fileStorage,
 	}
 }

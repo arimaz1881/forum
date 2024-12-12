@@ -2,7 +2,7 @@
 {{define "main"}}
 <div class="container">
     <h2>Create a New post </h2>
-    <form action='/posts/create' method='POST'>
+    <form action='/posts/create' method='POST' enctype='multipart/form-data'>
         <div class="form-group">
             <label for="title">Title:</label>
 
@@ -26,6 +26,9 @@
             <p>Catigories not found</p>
             {{end}}
         </div>
+<div>
+    <input type='file' name='img' accept=".jpg, .jpeg, .png, .gif">
+</div>
 
         <div>
             <button type="submit" class="btn btn-primary">Publish post</button>

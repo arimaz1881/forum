@@ -1,4 +1,5 @@
 package domain
+// методы в adapters унаследованные из моделей в domain нужны для обращения к внешним сервисам
 
 import (
 	"context"
@@ -13,6 +14,7 @@ type Post struct {
 	UserID       string
 	CreatedAt    time.Time
 	CreatedAtStr string
+	FileKey		 string
 }
 
 type PostView struct {
@@ -36,6 +38,7 @@ type CreatePostInput struct {
 	Title   string
 	Content string
 	UserID  int64
+	FileKey string
 }
 
 var (
@@ -43,4 +46,5 @@ var (
 	ErrInvalidTitle   = e3r.BadRequest("invalid title")
 	ErrInvalidContent = e3r.BadRequest("invalid content")
 	ErrPostNotFound   = e3r.NotFound("post not found")
+	ErrInvalidFile	  = e3r.BadRequest("invalid file")
 )

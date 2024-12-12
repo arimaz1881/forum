@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"forum/internal/domain"
 )
@@ -25,14 +26,16 @@ INSERT INTO
     posts (
         title,
         content,
-        user_id
+        user_id,
+		file_key
     )
 VALUES
-    (?, ?, ?) RETURNING id
+    (?, ?, ?, ?) RETURNING id
 `
 
 func (q *PostsRepositorySqlite3) Create(ctx context.Context, input domain.CreatePostInput) (int64, error) {
-	row := q.db.QueryRowContext(ctx, createPost, input.Title, input.Content, input.UserID)
+	row := q.db.QueryRowContext(ctx, createPost, input.Title, input.Content, input.UserID, input.FileKey)
+	fmt.Println(input.Title, input.Content, input.UserID, input.FileKey)
 	var postID int64
 	err := row.Scan(&postID)
 	return postID, err

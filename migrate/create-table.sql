@@ -13,6 +13,7 @@ CREATE TABLE
         created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
         title TEXT NOT NULL,
         content TEXT NOT NULL,
+        file_key TEXT,
         user_id INTEGER,
         FOREIGN KEY (user_id) REFERENCES users (id)
     );

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"forum/internal/domain"
 	"forum/internal/pkg/e3r"
 	"forum/internal/pkg/httphelper"
 	"forum/internal/service"
@@ -11,16 +12,30 @@ import (
 
 func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	var (
-		ctx  = r.Context()
-		user = ctx.Value(myKey).(User)
+		imgMaxSize int64 = 32 << 20
+		ctx              = r.Context()
+		user             = ctx.Value(myKey).(User)
 	)
 
-	r.ParseForm()
+	err := r.ParseMultipartForm(imgMaxSize)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "File too big", http.StatusBadRequest)
+		return
+	}
+
+	file, err := httphelper.FileFromForm(r, "img")
+	if err != nil {
+		e3r.ErrorEncoder(domain.ErrInvalidFile, w, user.IsAuthN)
+		return
+	}
+	defer file.FileReader.Close()
 
 	id, err := h.svc.CreatePost(ctx, service.CreatePostInput{
 		Title:      r.FormValue("title"),
 		Content:    r.FormValue("content"),
 		Categories: r.Form["catigoria"],
+		File:       file,
 		UserID:     user.ID,
 	})
 	if err != nil {

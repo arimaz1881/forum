@@ -76,7 +76,7 @@ func main() {
 
 	log.Printf("server started: http://localhost:%s\n", config.port)
 
-	if err := http.ListenAndServe(port, routes); err != nil {
+	if err := http.ListenAndServeTLS(port, config.certFile, config.keyFile, routes); err != nil {
 		panic(err)
 	}
 

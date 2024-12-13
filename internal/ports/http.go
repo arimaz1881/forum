@@ -118,6 +118,9 @@ func (h *Handler) InitRouters() http.Handler {
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+	
+	uploadServer := http.FileServer(http.Dir("./uploads/"))
+	mux.Handle("GET /uploads/", http.StripPrefix("/uploads", uploadServer))
 
 	for _, route := range h.Routes() {
 		handler := route.Handler

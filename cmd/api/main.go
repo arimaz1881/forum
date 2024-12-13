@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -19,7 +18,6 @@ import (
 )
 
 func main() {
-	fmt.Println("start")
 	// ------------------------------------------------------------
 	// Инициализирует конфигурацию приложения.
 	config := getConfig()

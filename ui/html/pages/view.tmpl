@@ -8,6 +8,11 @@ Forum #{{.Form.ID}}
     <strong>{{.Form.Title}}</strong>
     <span>#{{.Form.Author}}</span>
   </div>
+  {{if .Form.FileKey}}
+  <div class="post-image">
+      <img src="/uploads/{{.Form.FileKey}}" alt="Post Image" style="max-width: 100%; height: auto;">
+  </div>
+  {{end}}
   <pre><code>{{.Form.Content}}</code></pre>
   <div class='metadata'>
     <time>Created: {{.Form.CreatedAtStr}}</time>

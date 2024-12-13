@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"forum/internal/domain"
 )
@@ -35,7 +34,6 @@ VALUES
 
 func (q *PostsRepositorySqlite3) Create(ctx context.Context, input domain.CreatePostInput) (int64, error) {
 	row := q.db.QueryRowContext(ctx, createPost, input.Title, input.Content, input.UserID, input.FileKey)
-	fmt.Println(input.Title, input.Content, input.UserID, input.FileKey)
 	var postID int64
 	err := row.Scan(&postID)
 	return postID, err
@@ -218,7 +216,8 @@ SELECT
     created_at,
     title,
     content,
-    user_id
+    user_id,
+	file_key
 FROM
     posts
 WHERE
@@ -238,6 +237,7 @@ func (q *PostsRepositorySqlite3) GetOne(ctx context.Context, id string) (*domain
 		&post.Title,
 		&post.Content,
 		&post.UserID,
+		&post.FileKey,
 	)
 
 	if errors.Is(err, sql.ErrNoRows) {

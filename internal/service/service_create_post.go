@@ -38,7 +38,6 @@ func (s *service) CreatePost(ctx context.Context, input CreatePostInput) (_ int6
 	var fileKey string
 
 	if input.File != nil {
-		fmt.Println("file is not nil")
 		fileExt := strings.ToLower(filepath.Ext(input.File.FileName))
 		fileKey, err = s.saveFile(fileExt, input.File)
 		if err != nil {
@@ -56,7 +55,6 @@ func (s *service) CreatePost(ctx context.Context, input CreatePostInput) (_ int6
 		fmt.Println(err)
 		return 0, nil
 	}
-	fmt.Println("post created", postID)
 	for _, categoriaID := range input.Categories {
 		if err := s.postCategories.Create(ctx, domain.CreateCategoriaInput{
 			PostID:      postID,
@@ -65,7 +63,6 @@ func (s *service) CreatePost(ctx context.Context, input CreatePostInput) (_ int6
 			return 0, err
 		}
 	}
-	fmt.Println("hello")
 	return postID, nil
 }
 

@@ -29,7 +29,9 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		e3r.ErrorEncoder(domain.ErrInvalidFile, w, user.IsAuthN)
 		return
 	}
-	defer file.FileReader.Close()
+	if file != nil {
+		defer file.FileReader.Close()
+	}
 
 	id, err := h.svc.CreatePost(ctx, service.CreatePostInput{
 		Title:      r.FormValue("title"),

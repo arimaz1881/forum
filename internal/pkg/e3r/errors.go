@@ -13,3 +13,7 @@ func Internal(message string) *Error {
 func NotFound(message string) *Error {
 	return New(message, http.StatusNotFound)
 }
+
+func TooManyRequests(message string) *Error {
+	return New(message, http.StatusTooManyRequests)
+}

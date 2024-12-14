@@ -3,6 +3,7 @@ package ports
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"forum/internal/service"
 )
@@ -114,11 +115,13 @@ func (h *Handler) Routes() []Route {
 }
 
 func (h *Handler) InitRouters() http.Handler {
+	rateLimiter := NewRateLimiter(30, 30*time.Second) // 30 requests per 30 sec
+
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-	
+
 	uploadServer := http.FileServer(http.Dir("./uploads/"))
 	mux.Handle("GET /uploads/", http.StripPrefix("/uploads", uploadServer))
 
@@ -131,7 +134,7 @@ func (h *Handler) InitRouters() http.Handler {
 
 		pathWMethod := fmt.Sprintf("%s %s", route.Method, route.Path)
 
-		mux.Handle(pathWMethod, h.withContext(h.recoverPanic(handler)))
+		mux.Handle(pathWMethod, h.rateLimit(rateLimiter, (h.withContext(h.recoverPanic(handler)))))
 	}
 
 	return mux

@@ -27,19 +27,21 @@ type Service interface {
 
 	GetMyCreatedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
 	GetMyLikedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
+
+	GoogleAuth(ctx context.Context, input *GoogleUserInfo) (*SignInResponse, error) 
 }
 
 type service struct {
-	users            domain.UsersRepository
-	posts            domain.PostsRepository
-	categories       domain.CategoriesRepository
-	
+	users      domain.UsersRepository
+	posts      domain.PostsRepository
+	categories domain.CategoriesRepository
+
 	postCategories   domain.PostCategoriesRepository
 	postReactions    domain.PostReactionsRepository
 	sessions         domain.SessionsRepository
 	comments         domain.CommentsRepository
 	commentReactions domain.CommentReactionsRepository
-	fileStorage 	 string
+	fileStorage      string
 }
 
 func NewService(
@@ -62,6 +64,6 @@ func NewService(
 		sessions:         sessions,
 		comments:         comments,
 		commentReactions: commentReactions,
-		fileStorage: 	  fileStorage,
+		fileStorage:      fileStorage,
 	}
 }

@@ -44,7 +44,7 @@ func (q *UsersRepositorySqlite3) Create(ctx context.Context, input domain.Create
 
 const getUsersOne = `
 SELECT
-  id, login, email, hashed_password
+  id, login, email, coalesce(hashed_password, '')
 FROM
   users
 WHERE
@@ -52,7 +52,7 @@ WHERE
     ?1 is not null
     and id = ?1
   )
-  or (
+  OR (
     ?2 is not null
     and email = ?2
   )
@@ -74,4 +74,35 @@ func (q *UsersRepositorySqlite3) GetOne(ctx context.Context, input domain.GetUse
 	}
 
 	return &user, err
+}
+
+const OAuthGetUser = `
+SELECT 
+  id 
+FROM
+  users
+WHERE
+  oauth_provider = ? AND oauth_id = ?
+`
+
+const OAuthCreateUser = `
+INSERT INTO
+  users (oauth_provider, oauth_id, email, login)
+VALUES
+  (?, ?, ?, ?)
+`
+
+func (q *UsersRepositorySqlite3) OAuthFindOrCreateUser(ctx context.Context, input domain.GoogleAuthInput) (int64, error) {
+	var userID int64
+	err := q.db.QueryRowContext(ctx, OAuthGetUser, input.Provider, input.OAuthID).Scan(&userID)
+	if err == sql.ErrNoRows {
+		// Insert new user
+		result, err := q.db.ExecContext(ctx, OAuthCreateUser, input.Provider, input.OAuthID, input.Email, input.Login)
+		if err != nil {
+			return 0, err
+		}
+		userID, err = result.LastInsertId()
+		return userID, err
+	}
+	return userID, err
 }

@@ -1,10 +1,12 @@
 CREATE TABLE
     users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        oauth_provider TEXT,
+        oauth_id TEXT,
         created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
         login TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
-        hashed_password TEXT NOT NULL
+        hashed_password TEXT
     );
 
 CREATE TABLE

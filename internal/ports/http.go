@@ -111,6 +111,18 @@ func (h *Handler) Routes() []Route {
 			Handler: h.CreateCommentReaction,
 			Auth:    true,
 		},
+		{
+			Path:    "/auth/google/login",
+			Method:  http.MethodGet,
+			Handler: h.GoogleLogin,
+			Auth:    false,
+		},
+		{
+			Path:    "/auth/google/callback",
+			Method:  http.MethodGet,
+			Handler: h.GoogleCallback,
+			Auth:    false,
+		},
 	}
 }
 

@@ -15,6 +15,7 @@ type User struct {
 type UsersRepository interface {
 	Create(ctx context.Context, input CreateUserInput) (int64, error)
 	GetOne(ctx context.Context, input GetUserInput) (*User, error)
+	OAuthFindOrCreateUser(ctx context.Context, input GoogleAuthInput) (int64, error)
 }
 
 type CreateUserInput struct {
@@ -27,6 +28,14 @@ type GetUserInput struct {
 	UserID *string
 	Email  *string
 	Login  *string
+}
+
+type GoogleAuthInput struct {
+	Provider string
+	OAuthID  string
+	Email    string
+	Login    string
+	Password string
 }
 
 var (

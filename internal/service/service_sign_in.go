@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"forum/internal/domain"
+	"forum/internal/pkg/e3r"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -41,8 +42,12 @@ func (s *service) SignIn(ctx context.Context, input SignInInput) (*SignInRespons
 		return nil, err
 	}
 
+	if user.HashedPassword == "" {
+		return nil, e3r.BadRequest("Incorrect email or password")
+	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(input.Password)); err != nil {
-		return nil, err
+		return nil, e3r.BadRequest("Incorrect email or password")
 	}
 
 	if err := s.sessions.Close(ctx, domain.CloseSessionInput{

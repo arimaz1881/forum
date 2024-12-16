@@ -4,8 +4,8 @@ CREATE TABLE
         oauth_provider TEXT,
         oauth_id TEXT,
         created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
-        login TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
+        login TEXT NOT NULL UNIQUE,
+        email TEXT UNIQUE,
         hashed_password TEXT
     );
 

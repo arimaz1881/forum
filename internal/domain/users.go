@@ -5,6 +5,18 @@ import (
 	"forum/internal/pkg/e3r"
 )
 
+const (
+	GoogleClientID     = "" //your client id
+	GoogleClientSecret = "" //your cleant secret
+	GoogleRedirectURI  = "https://localhost:8082/auth/google/callback"
+	GoogleAuthURL      = "https://accounts.google.com/o/oauth2/v2/auth"
+	GoogleTokenURL     = "https://oauth2.googleapis.com/token"
+	GoogleUserInfoURL  = "https://www.googleapis.com/oauth2/v2/userinfo"
+	GithubClientID     = "" //your client id
+	GithubClientSecret = "" //your cleant secret
+	GithubRedirectURI  = "https://localhost:8082/auth/github/callback"
+)
+
 type User struct {
 	ID             int64
 	Login          string

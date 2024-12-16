@@ -123,6 +123,18 @@ func (h *Handler) Routes() []Route {
 			Handler: h.GoogleCallback,
 			Auth:    false,
 		},
+		{
+			Path:    "/auth/github/login",
+			Method:  http.MethodGet,
+			Handler: h.GitHubLogin,
+			Auth:    false,
+		},
+		{
+			Path:    "/auth/github/callback",
+			Method:  http.MethodGet,
+			Handler: h.GitHubCallback,
+			Auth:    false,
+		},
 	}
 }
 

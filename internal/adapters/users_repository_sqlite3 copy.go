@@ -44,7 +44,7 @@ func (q *UsersRepositorySqlite3) Create(ctx context.Context, input domain.Create
 
 const getUsersOne = `
 SELECT
-  id, login, email, coalesce(hashed_password, '')
+  id, login, coalesce(email, ''), coalesce(hashed_password, '')
 FROM
   users
 WHERE

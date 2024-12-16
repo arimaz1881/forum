@@ -28,7 +28,8 @@ type Service interface {
 	GetMyCreatedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
 	GetMyLikedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
 
-	GoogleAuth(ctx context.Context, input *GoogleUserInfo) (*SignInResponse, error) 
+	GoogleAuth(ctx context.Context, code string) (*SignInResponse, error)
+	GithubAuth(ctx context.Context, code string) (*SignInResponse, error)
 }
 
 type service struct {

@@ -170,13 +170,13 @@ JOIN
 WHERE
 	pr.user_id = ?
 and
-	pr.action = 'like'
+	pr.action = ?
 ORDER BY
     p.created_at desc
 `
 
-func (q *PostsRepositorySqlite3) GetLikedList(ctx context.Context, userID int64) ([]domain.PostView, error) {
-	rows, err := q.db.QueryContext(ctx, getMyLikedPostsList, userID)
+func (q *PostsRepositorySqlite3) GetLikedList(ctx context.Context, userID int64, action string) ([]domain.PostView, error) {
+	rows, err := q.db.QueryContext(ctx, getMyLikedPostsList, userID, action)
 	if err != nil {
 		return nil, err
 	}

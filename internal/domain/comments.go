@@ -6,6 +6,19 @@ import (
 	"time"
 )
 
+type CommentsList struct {
+	CommentID      string
+	PostID         string
+	CommentContent string
+	CommentDate    time.Time
+	CommentDateStr string
+	PostTitle      string
+	PostContent    string
+	PostDate       time.Time
+	PostDateStr    string
+	PostAuthor     string
+}
+
 type Comment struct {
 	ID           string
 	Author       string
@@ -21,6 +34,7 @@ type CommentsRepository interface {
 	Create(ctx context.Context, input CreateCommentInput) error
 	GetOne(ctx context.Context, commentID string) (*Comment, error)
 	GetList(ctx context.Context, postID string) ([]Comment, error)
+	GetMyCommentsList(ctx context.Context, userID int64) ([]CommentsList, error)
 }
 
 type CreateCommentInput struct {

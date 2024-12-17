@@ -43,4 +43,9 @@ type GetManyPostReactionInput struct {
 	Action string
 }
 
+type PostReactionList struct {
+	LikedPostsList 	[]PostView
+	DisikedPostsList	[]PostView
+}
+
 var ErrInvalidPostAction = e3r.BadRequest("invalid post action type")

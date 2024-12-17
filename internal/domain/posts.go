@@ -31,7 +31,7 @@ type PostsRepository interface {
 	GetOne(ctx context.Context, postID string) (*Post, error)
 	GetList(ctx context.Context) ([]PostView, error)
 	GetCreatedList(ctx context.Context, userID int64) ([]PostView, error)
-	GetLikedList(ctx context.Context, userID int64) ([]PostView, error)
+	GetLikedList(ctx context.Context, userID int64, action string) ([]PostView, error)
 }
 
 type CreatePostInput struct {

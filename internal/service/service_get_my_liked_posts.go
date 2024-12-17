@@ -5,12 +5,12 @@ import (
 	"forum/internal/domain"
 )
 
-func (s *service) GetMyLikedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error) {
+func (s *service) GetMyLikedPosts(ctx context.Context, input GetPostsListInput, action string) ([]domain.PostView, error) {
 	if input.UserID == 0 {
 		return nil, domain.ErrInvalidUserID
 	}
 
-	myLikedPosts, err := s.posts.GetLikedList(ctx, input.UserID)
+	myLikedPosts, err := s.posts.GetLikedList(ctx, input.UserID, action)
 	if err != nil {
 		return nil, err
 	}

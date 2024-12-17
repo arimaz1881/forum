@@ -99,6 +99,9 @@ func (q *UsersRepositorySqlite3) OAuthFindOrCreateUser(ctx context.Context, inpu
 		// Insert new user
 		result, err := q.db.ExecContext(ctx, OAuthCreateUser, input.Provider, input.OAuthID, input.Email, input.Login)
 		if err != nil {
+			if strings.Contains(err.Error(), "UNIQUE constraint") {
+				return 0, domain.ErrUserExists
+			}
 			return 0, err
 		}
 		userID, err = result.LastInsertId()

@@ -15,17 +15,41 @@ func (h *Handler) GetMyLikedPosts(w http.ResponseWriter, r *http.Request) {
 		categoryIDs = r.URL.Query()["categories"]
 	)
 
-	myLikedPosts, err := h.svc.GetMyLikedPosts(
+	myActionPosts, err := h.svc.GetMyLikedPosts(
 		ctx,
 		service.GetPostsListInput{
 			UserID:      user.ID,
 			CategoryIDs: categoryIDs,
 		},
+		"like",
 	)
 	if err != nil {
 		e3r.ErrorEncoder(err, w, user.IsAuthN)
 		return
 	}
 
-	httphelper.Render(w, http.StatusOK, "home", httphelper.GetTmplData(myLikedPosts, user.IsAuthN))
+	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myActionPosts, user.IsAuthN))
+}
+
+func (h *Handler) GetMyDislikedPosts(w http.ResponseWriter, r *http.Request) {
+	var (
+		ctx         = r.Context()
+		user        = ctx.Value(myKey).(User)
+		categoryIDs = r.URL.Query()["categories"]
+	)
+
+	myActionPosts, err := h.svc.GetMyLikedPosts(
+		ctx,
+		service.GetPostsListInput{
+			UserID:      user.ID,
+			CategoryIDs: categoryIDs,
+		},
+		"dislike",
+	)
+	if err != nil {
+		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		return
+	}
+
+	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myActionPosts, user.IsAuthN))
 }

@@ -1,0 +1,56 @@
+{{define "title"}}Home{{end}}
+{{define "main"}}
+
+<h2>Latest posts</h2>
+
+<div class="navbar">
+  <form class="activity", method="GET">
+    <button id="load-likes" formaction="/posts/my-posts" type="submit">You Posted</button>
+    <button id="load-likes" formaction="/posts/my-liked" type="submit">You Liked</button>
+    <button id="load-dislikes" formaction="/posts/my-disliked" type="submit">You Disliked</button>
+    <button id="load-dislikes" formaction="/posts/my-comments" type="submit">You Commented</button>
+  </form>
+</div>
+
+<form method="GET">
+  <div>
+    <label>Categories:</label>
+    <input type="checkbox" name="categories" value="1"> A
+    <input type="checkbox" name="categories" value="2"> F
+    <input type="checkbox" name="categories" value="3"> N
+    <input type="checkbox" name="categories" value="4"> G
+    <input type="checkbox" name="categories" value="5"> O
+  </div>
+
+  <input type="submit" value="Search post by categories">
+</form>
+
+
+<!---------------------------------------------------------------------------------------->
+
+{{if .Form}}
+<table>
+  <tr>
+    <th>Author</th>
+    <th>Title</th>
+    <th>Created At</th>
+  </tr>
+  {{range .Form}}
+  <tr>
+    <td>{{.Author}}</td>
+    <td><a href='/posts/view?id={{.ID}}'>{{.Title}}</a></td>
+    <td>{{.CreatedAtStr}}</td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      Categories: {{range .Categories}}#{{.Title}}&nbsp;&nbsp;{{end}}
+    </td>
+  </tr>
+  <br>
+  <tr class="spacer"></tr>
+  {{end}}
+</table>
+{{else}}
+<p>There's nothing to see here... yet!</p>
+{{end}}
+{{end}}

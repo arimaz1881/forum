@@ -26,7 +26,8 @@ type Service interface {
 	CommentReaction(ctx context.Context, input CommentReactionInput) error
 
 	GetMyCreatedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
-	GetMyLikedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
+	GetMyLikedPosts(ctx context.Context, input GetPostsListInput, action string) ([]domain.PostView, error)
+	GetMyCommentsList(ctx context.Context, input GetPostsListInput) ([]domain.CommentsList, error)
 
 	GoogleAuth(ctx context.Context, code string) (*SignInResponse, error)
 	GithubAuth(ctx context.Context, code string) (*SignInResponse, error)

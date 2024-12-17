@@ -8,14 +8,14 @@ import (
 	"forum/internal/service"
 )
 
-func (h *Handler) GetMyCreatedPosts(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetMyComments(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx         = r.Context()
 		user        = ctx.Value(myKey).(User)
 		categoryIDs = r.URL.Query()["categories"]
 	)
 
-	myCreatedPosts, err := h.svc.GetMyCreatedPosts(
+	myCreatedPosts, err := h.svc.GetMyCommentsList(
 		ctx,
 		service.GetPostsListInput{
 			UserID:      user.ID,
@@ -27,5 +27,5 @@ func (h *Handler) GetMyCreatedPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myCreatedPosts, user.IsAuthN))
+	httphelper.Render(w, http.StatusOK, "comments", httphelper.GetTmplData(myCreatedPosts, user.IsAuthN))
 }

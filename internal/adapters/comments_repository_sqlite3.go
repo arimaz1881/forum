@@ -133,3 +133,67 @@ func (q *CommentsRepositorySqlite3) GetOne(ctx context.Context, commentID string
 
 	return &comment, nil
 }
+
+const getMyComments = `
+SELECT
+    c.id,
+	c.post_id,
+    c.content,
+	c.created_at,
+    p.title,
+    p.content,
+    p.created_at,
+	u.login
+FROM
+    comments c
+JOIN
+	posts p
+	on p.id = c.post_id
+JOIN
+	users u
+	on u.id = p.user_id
+WHERE 
+	c.user_id = ?
+ORDER BY
+    c.created_at desc
+`
+
+func (q *CommentsRepositorySqlite3) GetMyCommentsList(ctx context.Context, userID int64) ([]domain.CommentsList, error) {
+	rows, err := q.db.QueryContext(ctx, getMyComments, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var commentsList []domain.CommentsList
+
+	for rows.Next() {
+		var comment domain.CommentsList
+		if err := rows.Scan(
+			&comment.CommentID,
+			&comment.PostID,
+			&comment.CommentContent,
+			&comment.CommentDate,
+			&comment.PostTitle,
+			&comment.PostContent,
+			&comment.PostDate,
+			&comment.PostAuthor,
+		); err != nil {
+			return nil, err
+		}
+		comment.CommentDateStr = comment.CommentDate.Format("2006-01-02 15:04:05")
+		comment.PostDateStr = comment.PostDate.Format("2006-01-02 15:04:05")
+		commentsList = append(commentsList, comment)
+	}
+
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return commentsList, nil
+}

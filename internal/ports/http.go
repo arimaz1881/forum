@@ -46,6 +46,18 @@ func (h *Handler) Routes() []Route {
 			Auth:    true,
 		},
 		{
+			Path:    "/posts/my-disliked",
+			Method:  http.MethodGet,
+			Handler: h.GetMyDislikedPosts,
+			Auth:    true,
+		},
+		{
+			Path:    "/posts/my-comments",
+			Method:  http.MethodGet,
+			Handler: h.GetMyComments,
+			Auth:    true,
+		},
+		{
 			Path:    "/posts/create",
 			Handler: h.CreatePost,
 			Method:  http.MethodPost,

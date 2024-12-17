@@ -7,13 +7,13 @@ import (
 
 const (
 	GoogleClientID     = "" //your client id
-	GoogleClientSecret = "" //your cleant secret
+	GoogleClientSecret = "" //your client secret
 	GoogleRedirectURI  = "https://localhost:8082/auth/google/callback"
 	GoogleAuthURL      = "https://accounts.google.com/o/oauth2/v2/auth"
 	GoogleTokenURL     = "https://oauth2.googleapis.com/token"
 	GoogleUserInfoURL  = "https://www.googleapis.com/oauth2/v2/userinfo"
 	GithubClientID     = "" //your client id
-	GithubClientSecret = "" //your cleant secret
+	GithubClientSecret = "" //your client secret
 	GithubRedirectURI  = "https://localhost:8082/auth/github/callback"
 )
 
@@ -58,6 +58,6 @@ var (
 	ErrInvalidPassword      = e3r.BadRequest("invalid password")
 	ErrInvalidLogin         = e3r.BadRequest("invalid login")
 	ErrIncorrectCredentials = e3r.BadRequest("incorrect credentials")
-	ErrUserExists           = e3r.BadRequest("user exist")
+	ErrUserExists           = e3r.BadRequest("user already exists")
 	ErrUserNotFound         = e3r.NotFound("user not found")
 )

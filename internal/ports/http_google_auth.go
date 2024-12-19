@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"forum/internal/domain"
 	"forum/internal/pkg/e3r"
+	"forum/internal/pkg/httphelper"
 	"forum/internal/pkg/sessions"
 	"net/http"
 	"net/url"
@@ -38,7 +39,7 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	state, err := r.Cookie("oauthstate")
 
 	if err != nil || state.Value != r.URL.Query().Get("state") {
-		e3r.ErrorEncoder(e3r.BadRequest("Invalid state parameter"), w, false)
+		e3r.ErrorEncoder(e3r.BadRequest("Invalid state parameter"), w, httphelper.User{})
 		return
 	}
 
@@ -49,7 +50,7 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 
 	// session, err := h.svc.GoogleAuth(ctx, googleUserInfo)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, false)
+		e3r.ErrorEncoder(err, w, httphelper.User{})
 		return
 	}
 

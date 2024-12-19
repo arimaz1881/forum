@@ -16,10 +16,13 @@ func InitTemplates(tmpls map[string]*template.Template) {
 }
 
 type TemplateData struct {
-	CurrentYear int
-	IsAuthN     bool
-	Form        any
-	Errors      map[string]string
+	CurrentYear    int
+	IsAuthN        bool
+	Role           string
+	CanSendRequest bool
+	Login		   string
+	Form           any
+	Errors         map[string]string
 }
 
 type File struct {
@@ -29,12 +32,23 @@ type File struct {
 	ContentType string
 }
 
-func GetTmplData(form any, isAuthN bool) *TemplateData {
+type User struct {
+	ID             int64
+	IsAuthN        bool
+	Role           string
+	CanSendRequest bool
+	Login		   string
+}
+
+func GetTmplData(form any, user User) *TemplateData {
 	return &TemplateData{
-		CurrentYear: time.Now().Year(),
-		IsAuthN:     isAuthN,
-		Form:        form,
-		Errors:      map[string]string{},
+		CurrentYear:    time.Now().Year(),
+		IsAuthN:        user.IsAuthN,
+		Role:           user.Role,
+		CanSendRequest: user.CanSendRequest,
+		Login:			user.Login,
+		Form:           form,
+		Errors:         map[string]string{},
 	}
 }
 

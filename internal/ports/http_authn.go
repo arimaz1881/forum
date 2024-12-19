@@ -1,6 +1,7 @@
 package ports
 
 import (
+	"forum/internal/domain"
 	"forum/internal/pkg/e3r"
 	"forum/internal/pkg/httphelper"
 	"forum/internal/pkg/sessions"
@@ -15,7 +16,10 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 		Password: r.FormValue("password"),
 	})
 	if err != nil {
-		e3r.ErrorEncoder(err, w, false)
+		e3r.ErrorEncoder(err, w, httphelper.User{
+			IsAuthN: false,
+			Role:    domain.RoleGuest,
+		})
 		return
 	}
 
@@ -24,7 +28,10 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SignUpPage(w http.ResponseWriter, r *http.Request) {
-	httphelper.Render(w, http.StatusOK, "sign-up", httphelper.GetTmplData(nil, false))
+	httphelper.Render(w, http.StatusOK, "sign-up", httphelper.GetTmplData(nil, httphelper.User{
+		IsAuthN: false,
+		Role:    domain.RoleGuest,
+	}))
 }
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +40,10 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		Password: r.FormValue("password"),
 	})
 	if err != nil {
-		e3r.ErrorEncoder(err, w, false)
+		e3r.ErrorEncoder(err, w, httphelper.User{
+			IsAuthN: false,
+			Role:    domain.RoleGuest,
+		})
 		return
 	}
 
@@ -42,7 +52,10 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SignInPage(w http.ResponseWriter, r *http.Request) {
-	httphelper.Render(w, http.StatusOK, "sign-in", httphelper.GetTmplData(nil, false))
+	httphelper.Render(w, http.StatusOK, "sign-in", httphelper.GetTmplData(nil, httphelper.User{
+		IsAuthN: false,
+		Role:    domain.RoleGuest,
+	}))
 }
 
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -52,10 +65,15 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.svc.Logout(r.Context(), service.LogOutInput{
+	var (
+		ctx  = r.Context()
+		user = getUserData(ctx)
+	)
+
+	if err := h.svc.Logout(ctx, service.LogOutInput{
 		Token: cookie.Value,
 	}); err != nil {
-		e3r.ErrorEncoder(err, w, true)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
 

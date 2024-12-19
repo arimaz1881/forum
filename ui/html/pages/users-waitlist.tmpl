@@ -1,0 +1,21 @@
+{{define "title"}}Moderators waitlist{{end}}
+{{define "main"}}
+
+
+{{if .Form}}
+<table>
+  <tr>
+    <th>Login</th>
+    <th>Title</th>
+  </tr>
+  {{range .Form}}
+  <tr>
+    <td>{{.Login}}</td>
+  </tr>
+  <tr class="spacer"></tr>
+  {{end}}
+</table>
+{{else}}
+<p>Users not found!</p>
+{{end}}
+{{end}}

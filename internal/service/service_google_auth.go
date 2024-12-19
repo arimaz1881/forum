@@ -39,6 +39,7 @@ func (s *service) GoogleAuth(ctx context.Context, code string) (*SignInResponse,
 		OAuthID:  googleUserInfo.GoogleID,
 		Email:    googleUserInfo.Email,
 		Login:    googleUserInfo.Login,
+		Role:           domain.RoleUser,
 		Password: "",
 	})
 	if err != nil {

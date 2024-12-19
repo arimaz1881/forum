@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -32,6 +33,7 @@ func main() {
 	//Загружает HTML-шаблоны для генерации веб-страниц.
 	tmpls, err := getTmpls()
 	if err != nil {
+		fmt.Println("", err)
 		log.Fatal()
 	}
 

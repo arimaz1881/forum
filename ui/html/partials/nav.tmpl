@@ -3,8 +3,14 @@
     <div>
         <a href='/'>Home</a>
         {{if .IsAuthN}}
+        <p>Welcome, {{.Login}}!</p>
         <a href='/posts/create'>Create post</a>
         <a href='/posts/my-liked'>My Activity</a>
+        {{if .CanSendRequest}}
+        <form action='/users/roles/submit' method='POST' style='display:inline-block;'>
+            <button type='submit'>become a moderator</button>
+        </form>
+        {{end}}
         {{end}}
     </div>
     <div>

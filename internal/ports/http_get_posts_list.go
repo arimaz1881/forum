@@ -11,16 +11,11 @@ func (h *Handler) GetPostsList(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx         = r.Context()
 		categoryIDs = r.URL.Query()["categories"]
-		userAuth    = false
-		user, ok    = ctx.Value(myKey).(User)
+		user        = getUserData(ctx)
 	)
 
-	if ok {
-		userAuth = user.IsAuthN
-	}
-
 	if r.URL.Path != "/" {
-		e3r.ErrorEncoder(e3r.NotFound("not found"), w, user.IsAuthN)
+		e3r.ErrorEncoder(e3r.NotFound("not found"), w, user)
 		return
 	}
 
@@ -29,9 +24,8 @@ func (h *Handler) GetPostsList(w http.ResponseWriter, r *http.Request) {
 		categoryIDs,
 	)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
-
-	httphelper.Render(w, http.StatusOK, "home", httphelper.GetTmplData(postsList, userAuth))
+	httphelper.Render(w, http.StatusOK, "home", httphelper.GetTmplData(postsList, user))
 }

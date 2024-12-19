@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -21,6 +22,17 @@ type CreatePostInput struct {
 	Categories []string
 	File       *httphelper.File
 	UserID     int64
+}
+
+type DeletePostInput struct {
+	PostID	string
+	UserID	int64
+}
+
+type EditPostInput struct {
+	PostID	string
+	Content string
+	UserID	int64
 }
 
 func (s *service) CreatePost(ctx context.Context, input CreatePostInput) (_ int64, err error) {
@@ -125,4 +137,85 @@ func (s *service) saveFile(fileExt string, file *httphelper.File) (string, error
 	}
 
 	return fileName, nil
+}
+
+
+
+func (s *service) DeletePost(ctx context.Context, input DeletePostInput) error {
+	if err := input.validate(); err != nil {
+		return err
+	}
+
+	post, err := s.posts.GetOne(ctx, input.PostID); 
+	if err != nil {
+		return err
+	}
+
+	if post.UserID != strconv.Itoa(int(input.UserID)) {
+		return domain.ErrForbidden
+	}
+
+	if err := s.posts.Delete(ctx, input.PostID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+func (i DeletePostInput) validate() error {
+	if i.PostID == "" {
+		return domain.ErrInvalidPostID
+	}
+
+	if i.UserID <= 0 {
+		return domain.ErrInvalidUserID
+	}
+
+	return nil
+}
+
+
+func (s *service) EditPost(ctx context.Context, input EditPostInput) error {
+	if err := input.validate(); err != nil {
+		return err
+	}
+
+	post, err := s.posts.GetOne(ctx, input.PostID); 
+	if err != nil {
+		return err
+	}
+
+	if post.UserID != strconv.Itoa(int(input.UserID)) {
+		return domain.ErrForbidden
+	}
+
+	if err := s.posts.Edit(ctx, domain.EditPostInput{
+		PostID: input.PostID,
+		Content: input.Content}); 
+		err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+func (i EditPostInput) validate() error {
+	if i.PostID == "" {
+		return domain.ErrInvalidPostID
+	}
+
+	if i.UserID <= 0 {
+		return domain.ErrInvalidUserID
+	}
+
+	i.Content = strings.ReplaceAll(i.Content, "ㅤ", "")
+
+	i.Content = strings.TrimSpace(i.Content)
+	if i.Content == "" {
+		return domain.ErrInvalidContent
+	}
+
+	return nil
 }

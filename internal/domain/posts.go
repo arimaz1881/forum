@@ -28,6 +28,8 @@ type PostView struct {
 
 type PostsRepository interface {
 	Create(ctx context.Context, input CreatePostInput) (int64, error)
+	Delete(ctx context.Context, id string) error
+	Edit(ctx context.Context, input EditPostInput) error
 	GetOne(ctx context.Context, postID string) (*Post, error)
 	GetList(ctx context.Context) ([]PostView, error)
 	GetCreatedList(ctx context.Context, userID int64) ([]PostView, error)
@@ -41,10 +43,16 @@ type CreatePostInput struct {
 	FileKey string
 }
 
+type EditPostInput struct {
+	PostID string
+	Content string
+}
+
 var (
 	ErrInvalidPostID  = e3r.BadRequest("invalid post_id")
 	ErrInvalidTitle   = e3r.BadRequest("invalid title")
 	ErrInvalidContent = e3r.BadRequest("invalid content")
 	ErrPostNotFound   = e3r.NotFound("post not found")
 	ErrInvalidFile	  = e3r.BadRequest("invalid file")
+	ErrForbidden	  = e3r.Forbidden("action is forbidden")
 )

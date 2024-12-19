@@ -8,15 +8,20 @@ import (
 
 type Service interface {
 	CreatePost(context.Context, CreatePostInput) (int64, error)
+	DeletePost(ctx context.Context, input DeletePostInput) error
+	EditPost(ctx context.Context, input EditPostInput) error
 
 	GetPostsOne(ctx context.Context, input GetPostOneInput) (*GetPostOneResponse, error)
 	GetCatigories(context.Context) ([]domain.Categoria, error)
 
 	GetPostsList(ctx context.Context, categories []string) ([]domain.PostView, error)
 
-	GetUserByToken(ctx context.Context, token string) (int64, error)
+	GetUserByToken(ctx context.Context, token string) (*GetUserByTokenResponse, error)
 
 	CreateComment(ctx context.Context, input CreateCommentInput) error
+	DeleteComment(ctx context.Context, input DeleteCommentInput) error
+	EditComment(ctx context.Context, input EditCommentInput) error
+
 
 	SignIn(ctx context.Context, input SignInInput) (*SignInResponse, error)
 	SignUp(ctx context.Context, input SignUpInput) (*SignUpResponse, error)
@@ -31,6 +36,12 @@ type Service interface {
 
 	GoogleAuth(ctx context.Context, code string) (*SignInResponse, error)
 	GithubAuth(ctx context.Context, code string) (*SignInResponse, error)
+
+	// moderator
+	SubmitRoleUpgrade(ctx context.Context, userID string) error
+	GetWaitlistUsers(ctx context.Context) ([]domain.User, error)
+	UpgradeRoleReject(ctx context.Context, input UpgradeRoleRejectInput) error
+	// UpgradeRoleApprove(ctx context.Context, input UpgradeRoleApproveInput)
 }
 
 type service struct {

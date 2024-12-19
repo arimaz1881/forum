@@ -6,6 +6,10 @@ func BadRequest(message string) *Error {
 	return New(message, http.StatusBadRequest)
 }
 
+func Forbidden(message string) *Error {
+	return New(message, http.StatusForbidden)
+}
+
 func Internal(message string) *Error {
 	return New(message, http.StatusInternalServerError)
 }

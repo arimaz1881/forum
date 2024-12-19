@@ -22,6 +22,7 @@ type CommentsList struct {
 type Comment struct {
 	ID           string
 	Author       string
+	AuthorID	 string
 	CreatedAt    time.Time
 	CreatedAtStr string
 	Content      string
@@ -32,6 +33,8 @@ type Comment struct {
 
 type CommentsRepository interface {
 	Create(ctx context.Context, input CreateCommentInput) error
+	Delete(ctx context.Context, commentID string) error
+	Edit(ctx context.Context, input EditCommentInput) error
 	GetOne(ctx context.Context, commentID string) (*Comment, error)
 	GetList(ctx context.Context, postID string) ([]Comment, error)
 	GetMyCommentsList(ctx context.Context, userID int64) ([]CommentsList, error)
@@ -41,6 +44,12 @@ type CreateCommentInput struct {
 	PostID  string
 	UserID  int64
 	Content string
+}
+
+type EditCommentInput struct {
+	CommentID  	string
+	UserID  	int64
+	Content 	string
 }
 
 var (

@@ -36,6 +36,32 @@ func (q *CommentsRepositorySqlite3) Create(ctx context.Context, input domain.Cre
 	return err
 }
 
+const deleteComment = `
+DELETE FROM
+    comments
+WHERE
+    id = ?
+`
+
+func (q *CommentsRepositorySqlite3) Delete(ctx context.Context, commentID string) error {
+	_, err := q.db.ExecContext(ctx, deleteComment, commentID)
+	return err
+}
+
+const EditComment = `
+UPDATE
+  comments
+SET
+  content = ?
+WHERE
+  id = ?;
+`
+
+func (q *CommentsRepositorySqlite3) Edit(ctx context.Context, input domain.EditCommentInput) error {
+	_, err := q.db.ExecContext(ctx, EditComment, input.Content, input.CommentID)
+	return err
+}
+
 const getCommentsList = `
 SELECT
     c.id,
@@ -96,6 +122,7 @@ SELECT
 	c.post_id,
     c.content,
     u.login,
+	u.id,
     c.created_at
 FROM
     comments c
@@ -116,6 +143,7 @@ func (q *CommentsRepositorySqlite3) GetOne(ctx context.Context, commentID string
 		&comment.PostID,
 		&comment.Content,
 		&comment.Author,
+		&comment.AuthorID,
 		&comment.CreatedAt,
 	)
 

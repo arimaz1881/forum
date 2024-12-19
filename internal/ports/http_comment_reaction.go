@@ -14,7 +14,7 @@ func (h *Handler) CreateCommentReaction(w http.ResponseWriter, r *http.Request) 
 		postID    = r.URL.Query().Get("post_id")
 		action    = r.FormValue("action")
 		ctx       = r.Context()
-		user      = ctx.Value(myKey).(User)
+		user      = getUserData(ctx)
 	)
 
 	if err := h.svc.CommentReaction(ctx, service.CommentReactionInput{
@@ -23,7 +23,7 @@ func (h *Handler) CreateCommentReaction(w http.ResponseWriter, r *http.Request) 
 		UserID:    user.ID,
 		Action:    action,
 	}); err != nil {
-		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
 

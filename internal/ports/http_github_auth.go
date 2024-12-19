@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"forum/internal/domain"
 	"forum/internal/pkg/e3r"
+	"forum/internal/pkg/httphelper"
 	"forum/internal/pkg/sessions"
 	"net/http"
 	"net/url"
@@ -30,7 +31,8 @@ func (h *Handler) GitHubCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	session, err := h.svc.GithubAuth(ctx, code)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, false)
+		// TODO: check user data
+		e3r.ErrorEncoder(err, w, httphelper.User{})
 		return
 	}
 

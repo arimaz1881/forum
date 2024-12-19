@@ -11,7 +11,7 @@ import (
 func (h *Handler) GetMyCreatedPosts(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx         = r.Context()
-		user        = ctx.Value(myKey).(User)
+		user        = getUserData(ctx)
 		categoryIDs = r.URL.Query()["categories"]
 	)
 
@@ -23,9 +23,9 @@ func (h *Handler) GetMyCreatedPosts(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
 
-	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myCreatedPosts, user.IsAuthN))
+	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myCreatedPosts, user))
 }

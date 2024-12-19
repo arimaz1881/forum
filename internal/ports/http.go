@@ -1,10 +1,12 @@
 package ports
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
 
+	"forum/internal/pkg/httphelper"
 	"forum/internal/service"
 )
 
@@ -147,6 +149,36 @@ func (h *Handler) Routes() []Route {
 			Handler: h.GitHubCallback,
 			Auth:    false,
 		},
+		{
+			Path:    "/users/roles/submit",
+			Handler: h.SubmitRoleUpgrade,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/delete-post",
+			Handler: h.DeletePost,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/edit-post",
+			Handler: h.EditPost,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/delete-cumment",
+			Handler: h.DeleteComment,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/edit-cumment",
+			Handler: h.EditCommennt,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
 	}
 }
 
@@ -174,4 +206,31 @@ func (h *Handler) InitRouters() http.Handler {
 	}
 
 	return mux
+}
+
+func getUserData(ctx context.Context) httphelper.User {
+	var (
+		userAuth       bool
+		canSendRequest bool
+		userID         int64
+		role           = "guest"
+		login		   string
+	)
+
+	user, ok := ctx.Value(myKey).(User)
+	if ok {
+		userAuth = user.IsAuthN
+		role = user.Role
+		userID = user.ID
+		canSendRequest = user.CanSendRequest
+		login = user.Login
+	}
+
+	return httphelper.User{
+		ID:             userID,
+		IsAuthN:        userAuth,
+		Role:           role,
+		CanSendRequest: canSendRequest,
+		Login:			login,
+	}
 }

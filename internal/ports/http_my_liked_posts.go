@@ -11,7 +11,7 @@ import (
 func (h *Handler) GetMyLikedPosts(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx         = r.Context()
-		user        = ctx.Value(myKey).(User)
+		user        = getUserData(ctx)
 		categoryIDs = r.URL.Query()["categories"]
 	)
 
@@ -24,17 +24,18 @@ func (h *Handler) GetMyLikedPosts(w http.ResponseWriter, r *http.Request) {
 		"like",
 	)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
 
-	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myActionPosts, user.IsAuthN))
+	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myActionPosts, user))
+
 }
 
 func (h *Handler) GetMyDislikedPosts(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx         = r.Context()
-		user        = ctx.Value(myKey).(User)
+		user        = getUserData(ctx)
 		categoryIDs = r.URL.Query()["categories"]
 	)
 
@@ -47,9 +48,10 @@ func (h *Handler) GetMyDislikedPosts(w http.ResponseWriter, r *http.Request) {
 		"dislike",
 	)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
 
-	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myActionPosts, user.IsAuthN))
+	httphelper.Render(w, http.StatusOK, "reacted", httphelper.GetTmplData(myActionPosts, user))
+
 }

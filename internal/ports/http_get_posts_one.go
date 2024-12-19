@@ -12,23 +12,19 @@ func (h *Handler) GetPostsOne(w http.ResponseWriter, r *http.Request) {
 	var (
 		postID = r.URL.Query().Get("id")
 		ctx    = r.Context()
-		userID int64
+		user   = getUserData(ctx)
 	)
-
-	user, ok := ctx.Value(myKey).(User)
-	if ok {
-		userID = user.ID
-	}
 
 	post, err := h.svc.GetPostsOne(ctx, service.GetPostOneInput{
 		PostID: postID,
-		UserID: userID,
+		UserID: user.ID,
 	},
 	)
 	if err != nil {
-		e3r.ErrorEncoder(err, w, user.IsAuthN)
+		e3r.ErrorEncoder(err, w, user)
 		return
 	}
+	
 
-	httphelper.Render(w, http.StatusOK, "view", httphelper.GetTmplData(post, user.IsAuthN))
+	httphelper.Render(w, http.StatusOK, "view", httphelper.GetTmplData(post, user))
 }

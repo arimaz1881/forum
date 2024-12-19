@@ -44,6 +44,7 @@ func (s *service) SignUp(ctx context.Context, input SignUpInput) (*SignUpRespons
 	userID, err := s.users.Create(ctx, domain.CreateUserInput{
 		Email:          input.Email,
 		Login:          input.Login,
+		Role:           domain.RoleUser,
 		HashedPassword: string(hashedPasswordBytes),
 	})
 	if err != nil {

@@ -39,16 +39,16 @@ func (e Error) Error() string {
 	return e.Message
 }
 
-func ErrorEncoder(err error, w http.ResponseWriter, authN bool) {
+func ErrorEncoder(err error, w http.ResponseWriter, user httphelper.User) {
 	status := getStatus(err)
 	log.Printf("Response status: %d, Message: %s", status, err.Error())
-
+	
 	// if bad request return warning with prefilled data
 
 	httphelper.Render(w, status, "error", httphelper.GetTmplData(Error{
 		Message: err.Error(),
 		Code:    status,
-	}, authN))
+	}, user))
 }
 
 func getStatus(err error) int {

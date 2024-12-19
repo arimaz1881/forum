@@ -144,6 +144,12 @@ nav a {
     display: inline-block;
 }
 
+nav p {
+    color: #fff;
+    margin-right: 1.5em;
+    display: inline-block;
+}
+
 nav form {
     color: #fff;
     display: inline-block;

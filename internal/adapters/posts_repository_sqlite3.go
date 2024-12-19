@@ -46,8 +46,22 @@ WHERE
     id = ?
 `
 
-func (q *PostsRepositorySqlite3) Delete(ctx context.Context, id int64) error {
+func (q *PostsRepositorySqlite3) Delete(ctx context.Context, id string) error {
 	_, err := q.db.ExecContext(ctx, deletePost, id)
+	return err
+}
+
+const EditPost = `
+UPDATE
+  posts
+SET
+  content = ?
+WHERE
+  id = ?;
+`
+
+func (q *PostsRepositorySqlite3) Edit(ctx context.Context, input domain.EditPostInput) error {
+	_, err := q.db.ExecContext(ctx, EditPost, input.Content, input.PostID)
 	return err
 }
 

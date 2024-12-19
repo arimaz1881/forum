@@ -63,9 +63,12 @@ func (rl *RateLimiter) Allow(ip string) bool {
 
 func (h *Handler) rateLimit(rl *RateLimiter, next http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		user := getUserData(ctx)
+		// fmt.Print(user.IsAuthN) // TODO: почему то здесь всегда false
 		clientIP := r.RemoteAddr // Use client's IP as the key
 		if !rl.Allow(clientIP) {
-			e3r.ErrorEncoder(e3r.TooManyRequests("too many requests"), w, false)
+			e3r.ErrorEncoder(e3r.TooManyRequests("too many requests"), w, user)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -95,17 +98,16 @@ func (h *Handler) requireAuthN(next http.Handler) http.HandlerFunc {
 			return
 		}
 
-		userID, err := h.svc.GetUserByToken(ctx, cookie.Value)
+		user, err := h.svc.GetUserByToken(ctx, cookie.Value)
 		if err != nil {
 			log.Printf("user by token: %s\n", err)
 			return
 		}
-
-		if userID == 0 {
+		if user.ID == 0 {
 			http.Redirect(w, r, "/authn/sign-in", http.StatusSeeOther)
 			return
 		}
-
+		
 		w.Header().Add("Cache-Control", "no-store")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -116,8 +118,11 @@ type key string
 const myKey key = "myKey"
 
 type User struct {
-	ID      int64
-	IsAuthN bool
+	ID             int64
+	IsAuthN        bool
+	Role           string
+	CanSendRequest bool
+	Login		   string
 }
 
 func (h *Handler) withContext(next http.Handler) http.HandlerFunc {
@@ -130,15 +135,30 @@ func (h *Handler) withContext(next http.Handler) http.HandlerFunc {
 			return
 		}
 
-		userID, err := h.svc.GetUserByToken(ctx, cookie.Value)
+		user, err := h.svc.GetUserByToken(ctx, cookie.Value)
 		if err != nil && !errors.Is(err, sql.ErrNoRows) {
 			http.Redirect(w, r, "/authn/sign-in", http.StatusSeeOther)
 			return
 		}
 
+		role := "guest"
+		if user.Role != "" {
+			role = user.Role
+		}
+
+		userCanSendRequest := false
+		if user.ID != 0 {
+			userCanSendRequest = user.CanSendRequest
+		}
+
+		login := user.Login
+
 		ctx = context.WithValue(ctx, myKey, User{
-			ID:      userID,
-			IsAuthN: userID != 0,
+			ID:             user.ID,
+			IsAuthN:        user.ID != 0,
+			Role:           role,
+			CanSendRequest: userCanSendRequest,
+			Login: 			login,
 		})
 
 		w.Header().Add("Cache-Control", "no-store")

@@ -19,6 +19,29 @@ Forum #{{.Form.ID}}
     <span>Tags: {{range .Form.Categories}}#{{.Title}} {{end}}</span>
   </div>
 </div>
+{{if $.IsAuthN}}
+{{if eq .Form.Author $.Login}}
+<div class="actions">
+  <!-- Кнопка редактирования -->
+  <button onclick="openPostEditForm('{{.Form.ID}}', '{{.Form.Content}}')">Edit</button>
+  
+  <!-- Кнопка удаления -->
+  <form action="/delete-post?post_id={{.Form.ID}}" method="POST" style="display:inline;">
+    <button type="submit" class="delete-button">Delete</button>
+  </form>
+</div>
+<!-- Форма для редактирования комментария (скрыта по умолчанию) -->
+<div id="edit-post-form" style="display:none;">
+  <form action="/edit-post?post_id={{.Form.ID}}" method="POST" enctype='multipart/form-data'>
+    <input type="hidden" id="edit-post-id" name="edit-post" value="">
+    <label for="edit-post-content">Edit your post:</label>
+    <textarea id="edit-post-content" name="edit-post-content"></textarea>
+    <button type="submit">Save</button>
+    <button type="button" onclick="closePostEditForm()">Cancel</button>
+  </form>
+</div>
+{{end}}
+{{end}}
 <form method="post" action='/posts/reaction?id={{.Form.ID}}'>
   <div class='metadata'>
     <button class="btn reaction-btn-like {{if .Form.Likes.Actioned}}btn-active-like{{end}}" name="action" value="like"
@@ -56,31 +79,29 @@ Forum #{{.Form.ID}}
   </div>
 
   {{if $.IsAuthN}}
-  <div class="actions">
-    <!-- Кнопка редактирования -->
-    <button onclick="openEditForm('{{.ID}}', '{{.Content}}')">Edit</button>
-    
-    <!-- Кнопка удаления -->
-    <form action="/delete-comment/{{.ID}}" method="POST" style="display:inline;">
-      <button type="submit" class="delete-button">Delete</button>
-    </form>
-  </div>
+    {{if eq .Author $.Login}}
+    <div class="actions">
+      <!-- Кнопка редактирования -->
+      <button onclick="openCommentEditForm('{{.ID}}', '{{.Content}}')">Edit</button>
+      
+      <!-- Кнопка удаления -->
+      <form action="/delete-cumment?post_id={{.PostID}}&comment_id={{.ID}}" method="POST" style="display:inline;">
+        <button type="submit" class="delete-button">Delete</button>
+      </form>
+        <!-- Форма для редактирования комментария (скрыта по умолчанию) -->
+      <div id="edit-comment-form" style="display:none;">
+        <form action="/edit-cumment?post_id={{.PostID}}&comment_id={{.ID}}" method="POST">
+          <input type="hidden" id="edit-comment-id" name="id" value="">
+          <label for="edit-comment-content">Edit your comment:</label>
+          <textarea id="edit-comment-content" name="edit-comment-content"></textarea>
+          <button type="submit">Save</button>
+          <button type="button" onclick="closeCommentEditForm()">Cancel</button>
+        </form>
+      </div>
+    </div>
+    {{end}}
   {{end}}
 </div>
-
-
-<!-- Форма для редактирования комментария (скрыта по умолчанию) -->
-<div id="edit-comment-form" style="display:none;">
-  <form action="/edit-comment" method="POST">
-    <input type="hidden" id="edit-comment-id" name="id" value="">
-    <label for="edit-comment-content">Edit your comment:</label>
-    <textarea id="edit-comment-content" name="content"></textarea>
-    <button type="submit">Save</button>
-    <button type="button" onclick="closeEditForm()">Cancel</button>
-  </form>
-</div>
-
-
 
 <form method="post" action='/comments/reaction?post_id={{.PostID}}&comment_id={{.ID}}'>
   <div class='metadata'>
@@ -97,14 +118,12 @@ Forum #{{.Form.ID}}
     </button>
   </div>
 </form>
-
-
 {{end}}
 
 
 <script>
   // Функция для открытия формы редактирования
-  function openEditForm(id, content) {
+  function openCommentEditForm(id, content) {
     // Установим данные в форму редактирования
     document.getElementById('edit-comment-id').value = id;
     document.getElementById('edit-comment-content').value = content;
@@ -114,13 +133,33 @@ Forum #{{.Form.ID}}
   }
 
   // Функция для закрытия формы редактирования
-  function closeEditForm() {
+  function closeCommentEditForm() {
     // Очистим данные формы
     document.getElementById('edit-comment-id').value = '';
     document.getElementById('edit-comment-content').value = '';
 
     // Скрываем форму
     document.getElementById('edit-comment-form').style.display = 'none';
+  }
+
+  // Функция для открытия формы редактирования
+  function openPostEditForm(id, content) {
+    // Установим данные в форму редактирования
+    document.getElementById('edit-post-id').value = id;
+    document.getElementById('edit-post-content').value = content;
+
+    // Покажем форму редактирования
+    document.getElementById('edit-post-form').style.display = 'block';
+  }
+
+  // Функция для закрытия формы редактирования
+  function closePostEditForm() {
+    // Очистим данные формы
+    document.getElementById('edit-post-id').value = '';
+    document.getElementById('edit-post-content').value = '';
+
+    // Скрываем форму
+    document.getElementById('edit-post-form').style.display = 'none';
   }
 </script>
 

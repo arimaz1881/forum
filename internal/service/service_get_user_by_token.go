@@ -2,23 +2,47 @@ package service
 
 import (
 	"context"
+	"forum/internal/domain"
+	"strconv"
 	"time"
 )
 
-func (s *service) GetUserByToken(ctx context.Context, token string) (int64, error) {
+type GetUserByTokenResponse struct {
+	ID             int64
+	Role           string
+	CanSendRequest bool
+	Login		   string
+}
+
+func (s *service) GetUserByToken(ctx context.Context, token string) (*GetUserByTokenResponse, error) {
 	session, err := s.sessions.GetOne(ctx, token)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	var (
 		now     = time.Now().UTC()
 		expired = now.After(session.ExpresAt)
+		userID  = strconv.Itoa(int(session.UserID))
 	)
 
-	if expired {
-		return 0, nil
+	user, err := s.users.GetOne(ctx, domain.GetUserInput{
+		UserID: &userID,
+	})
+	if err != nil {
+		return nil, err
 	}
 
-	return session.UserID, nil
+	if expired {
+		return &GetUserByTokenResponse{
+			Role: user.Role,
+		}, nil
+	}
+
+	return &GetUserByTokenResponse{
+		ID:             session.UserID,
+		Role:           user.Role,
+		CanSendRequest: !user.ModeratorRoleRequest,
+		Login:			user.Login,
+	}, nil
 }

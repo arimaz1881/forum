@@ -19,7 +19,8 @@ func (s *service) PostReaction(ctx context.Context, input PostReactionInput) err
 		return err
 	}
 
-	if _, err := s.posts.GetOne(ctx, input.PostID); err != nil {
+	post, err := s.posts.GetOne(ctx, input.PostID)
+	if err != nil {
 		return err
 	}
 
@@ -37,12 +38,29 @@ func (s *service) PostReaction(ctx context.Context, input PostReactionInput) err
 		newAction = input.Action
 	}
 
-	if err := s.postReactions.Create(ctx, domain.CreatePostReactionInput{
+	reactionID, err := s.postReactions.Create(ctx, domain.CreatePostReactionInput{
 		UserID: input.UserID,
 		PostID: input.PostID,
 		Action: newAction,
-	}); err != nil {
+	})
+	if err != nil {
 		return err
+	}
+
+	if newAction != "" {
+		if err = s.notifications.Create(ctx, domain.CreateNotificationInput{
+			PostID:   input.PostID,
+			AuthorID: post.UserID,
+			Action:   newAction,
+			ActionID: reactionID,
+			Seen:     false,
+		}); err != nil {
+			return err
+		}
+	} else {
+		if err = s.notifications.Delete(ctx, reactionID); err!= nil {
+            return err
+        }
 	}
 
 	return nil

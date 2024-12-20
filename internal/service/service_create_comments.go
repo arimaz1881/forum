@@ -29,15 +29,31 @@ func (s *service) CreateComment(ctx context.Context, input CreateCommentInput) e
 		return err
 	}
 
-	if _, err := s.posts.GetOne(ctx, input.PostID); err != nil {
+	post, err := s.posts.GetOne(ctx, input.PostID); 
+	if err != nil {
 		return domain.ErrPostNotFound
 	}
 
-	return s.comments.Create(ctx, domain.CreateCommentInput{
+	commentID, err := s.comments.Create(ctx, domain.CreateCommentInput{
 		PostID:  input.PostID,
 		UserID:  input.UserID,
 		Content: input.Content,
 	})
+	if err!= nil {
+        return err
+    }
+
+	if err := s.notifications.Create(ctx, domain.CreateNotificationInput{
+		PostID:   input.PostID,
+		AuthorID: post.UserID,
+		Action:   "comment",
+		CommentID: commentID,
+		Seen:     false,
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (i CreateCommentInput) validate() error {

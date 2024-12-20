@@ -47,6 +47,7 @@ func main() {
 		users            = adapters.NewUsersRepositorySqlite3(db)
 		posts            = adapters.NewPostsRepositorySqlite3(db)
 		categories       = adapters.NewCategoriesRepositorySqlite3(db)
+		notifications    = adapters.NewNotificationsRepositorySqlite3(db)
 		postCategories   = adapters.NewPostCategoriesRepositorySqlite3(db)
 		sessions         = adapters.NewSessionsRepositorySqlite3(db)
 		postReactions    = adapters.NewPostReactionsRepositorySqlite3(db)
@@ -59,6 +60,7 @@ func main() {
 		users,
 		posts,
 		categories,
+		notifications,
 		postCategories,
 		postReactions,
 		sessions,

@@ -6,6 +6,7 @@
         <p>Welcome, {{.Login}}!</p>
         <a href='/posts/create'>Create post</a>
         <a href='/posts/my-liked'>My Activity</a>
+        <a href='/notifications'>Notifications</a>
         {{if .CanSendRequest}}
         <form action='/users/roles/submit' method='POST' style='display:inline-block;'>
             <button type='submit'>become a moderator</button>

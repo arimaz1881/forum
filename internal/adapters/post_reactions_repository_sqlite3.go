@@ -30,16 +30,22 @@ VALUES
     (?, ?, ?)
 ON CONFLICT (post_id, user_id)
 DO UPDATE SET
-    action = EXCLUDED.action;
+    action = EXCLUDED.action
+	RETURNING id;
 `
 
-func (q *PostReactionsRepositorySqlite3) Create(ctx context.Context, input domain.CreatePostReactionInput) error {
-	_, err := q.db.ExecContext(ctx, createPostReaction, input.PostID, input.UserID, input.Action)
-	return err
+func (q *PostReactionsRepositorySqlite3) Create(ctx context.Context, input domain.CreatePostReactionInput) (reactionID int64, err error) {
+	row := q.db.QueryRowContext(ctx, createPostReaction, input.PostID, input.UserID, input.Action)
+	if err != nil {
+        return 0, err
+    }
+	err = row.Scan(&reactionID)
+	return reactionID, err
 }
 
 const getPostReactionsOne = `
 SELECT
+  id,
   post_id,
   user_id,
   action
@@ -57,6 +63,7 @@ func (q *PostReactionsRepositorySqlite3) GetOne(ctx context.Context, input domai
 	var postReaction domain.PostReaction
 
 	err := row.Scan(
+		&postReaction.ID,
 		&postReaction.PostID,
 		&postReaction.UserID,
 		&postReaction.Action,

@@ -179,6 +179,18 @@ func (h *Handler) Routes() []Route {
 			Method:  http.MethodPost,
 			Auth:    true,
 		},
+		{
+			Path:    "/notifications",
+			Handler: h.GetNotificationsList,
+			Method:  http.MethodGet,
+			Auth:    true,
+		},
+		{
+			Path:    "/notification-look",
+			Handler: h.NotificationLook,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
 	}
 }
 
@@ -214,7 +226,7 @@ func getUserData(ctx context.Context) httphelper.User {
 		canSendRequest bool
 		userID         int64
 		role           = "guest"
-		login		   string
+		login          string
 	)
 
 	user, ok := ctx.Value(myKey).(User)
@@ -231,6 +243,6 @@ func getUserData(ctx context.Context) httphelper.User {
 		IsAuthN:        userAuth,
 		Role:           role,
 		CanSendRequest: canSendRequest,
-		Login:			login,
+		Login:          login,
 	}
 }

@@ -32,7 +32,7 @@ type Comment struct {
 }
 
 type CommentsRepository interface {
-	Create(ctx context.Context, input CreateCommentInput) error
+	Create(ctx context.Context, input CreateCommentInput) (int64, error)
 	Delete(ctx context.Context, commentID string) error
 	Edit(ctx context.Context, input EditCommentInput) error
 	GetOne(ctx context.Context, commentID string) (*Comment, error)

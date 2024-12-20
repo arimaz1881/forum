@@ -65,6 +65,7 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE post_reactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
     user_id INTEGER NOT NULL,
     action TEXT,
@@ -83,3 +84,18 @@ CREATE TABLE comment_reactions (
 );
 
 CREATE TABLE sessions (user_id INTEGER, token TEXT, expires_at TIME);
+
+CREATE TABLE notifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
+    post_id INTEGER NOT NULL,
+    author_id INTEGER NOT NULL,
+    action_id INTEGER UNIQUE,
+    comment_id INTEGER UNIQUE,
+    action_type TEXT NOT NULL,
+    seen BOOLEAN DEFAULT 0 NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (author_id) REFERENCES users (id),
+    FOREIGN KEY (action_id) REFERENCES post_reactions (id),
+    FOREIGN KEY (comment_id) REFERENCES comments (id)
+);

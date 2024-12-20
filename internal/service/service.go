@@ -30,6 +30,9 @@ type Service interface {
 	PostReaction(ctx context.Context, input PostReactionInput) error
 	CommentReaction(ctx context.Context, input CommentReactionInput) error
 
+	GetNotificationsList(ctx context.Context, userID int64) ([]domain.Notification, error)
+	LookNotification(ctx context.Context, input LookNotificationInput) error
+
 	GetMyCreatedPosts(ctx context.Context, input GetPostsListInput) ([]domain.PostView, error)
 	GetMyLikedPosts(ctx context.Context, input GetPostsListInput, action string) ([]domain.PostView, error)
 	GetMyCommentsList(ctx context.Context, input GetPostsListInput) ([]domain.CommentsList, error)
@@ -45,10 +48,10 @@ type Service interface {
 }
 
 type service struct {
-	users      domain.UsersRepository
-	posts      domain.PostsRepository
-	categories domain.CategoriesRepository
-
+	users      		 domain.UsersRepository
+	posts      		 domain.PostsRepository
+	categories 		 domain.CategoriesRepository
+	notifications	 domain.NotificationsRepository
 	postCategories   domain.PostCategoriesRepository
 	postReactions    domain.PostReactionsRepository
 	sessions         domain.SessionsRepository
@@ -61,6 +64,7 @@ func NewService(
 	users domain.UsersRepository,
 	posts domain.PostsRepository,
 	categories domain.CategoriesRepository,
+	notifications domain.NotificationsRepository,
 	postCategories domain.PostCategoriesRepository,
 	postReactions domain.PostReactionsRepository,
 	sessions domain.SessionsRepository,
@@ -72,6 +76,7 @@ func NewService(
 		users:            users,
 		posts:            posts,
 		categories:       categories,
+		notifications:	  notifications,
 		postCategories:   postCategories,
 		postReactions:    postReactions,
 		sessions:         sessions,

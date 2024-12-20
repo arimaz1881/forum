@@ -1,20 +1,7 @@
 {{define "title"}}Home{{end}}
 {{define "main"}}
 
-<h2>Latest posts</h2>
-
-<form method="GET">
-  <div>
-    <label>Categories:</label>
-    <input type="checkbox" name="categories" value="1"> A
-    <input type="checkbox" name="categories" value="2"> F
-    <input type="checkbox" name="categories" value="3"> N
-    <input type="checkbox" name="categories" value="4"> G
-    <input type="checkbox" name="categories" value="5"> O
-  </div>
-
-  <input type="submit" value="Search post by categories">
-</form>
+<h2>Notifications</h2>
 
 
 <!---------------------------------------------------------------------------------------->
@@ -22,20 +9,14 @@
 {{if .Form}}
 <table>
   <tr>
-    <th>Author</th>
     <th>Title</th>
-    <th>Created At</th>
+    <th>Action</th>
   </tr>
   {{range .Form}}
   <tr>
-    <td>{{.Author}}</td>
-    <td><a href='/posts/view?id={{.ID}}'>{{.Title}}</a></td>
-    <td>{{.CreatedAtStr}}</td>
-  </tr>
-  <tr>
-    <td colspan="3">
-      Categories: {{range .Categories}}#{{.Title}}&nbsp;&nbsp;{{end}}
-    </td>
+    <td><a href='/posts/view?id={{.ID}}'>{{.PostTitle}}</a></td>
+    <td>{{.Action}}</td>
+    <td><form method="post" id="notification-look", action="/notification-look?notification_id={{.ID}}"><button type="submit">Mark as read</button></form></td>
   </tr>
   <tr class="spacer"></tr>
   {{end}}

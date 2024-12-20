@@ -28,12 +28,15 @@ INSERT INTO
         user_id
     )
 VALUES
-    (?, ?, ?);
+    (?, ?, ?)
+RETURNING id;
 `
 
-func (q *CommentsRepositorySqlite3) Create(ctx context.Context, input domain.CreateCommentInput) error {
-	_, err := q.db.ExecContext(ctx, createComment, input.PostID, input.Content, input.UserID)
-	return err
+func (q *CommentsRepositorySqlite3) Create(ctx context.Context, input domain.CreateCommentInput) (int64, error) {
+	row := q.db.QueryRowContext(ctx, createComment, input.PostID, input.Content, input.UserID)
+    var commentID int64
+    err := row.Scan(&commentID)
+    return commentID, err
 }
 
 const deleteComment = `

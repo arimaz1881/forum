@@ -11,6 +11,7 @@ var (
 )
 
 type PostReaction struct {
+	ID     int64
 	PostID int64
 	Action string
 	UserID int64
@@ -22,7 +23,7 @@ type Action struct {
 }
 
 type PostReactionsRepository interface {
-	Create(ctx context.Context, input CreatePostReactionInput) error
+	Create(ctx context.Context, input CreatePostReactionInput) (reactionID int64, err error)
 	GetOne(ctx context.Context, input GetOnePostReactionInput) (*PostReaction, error)
 	GetMany(ctx context.Context, input GetManyPostReactionInput) ([]PostReaction, error)
 }

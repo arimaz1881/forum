@@ -39,6 +39,7 @@ type UsersRepository interface {
 	GetOne(ctx context.Context, input GetUserInput) (*User, error)
 	OAuthFindOrCreateUser(ctx context.Context, input GoogleAuthInput) (int64, error)
 	GetWaitlist(ctx context.Context) ([]User, error)
+	GetModerators(ctx context.Context) ([]User, error)
 }
 
 type CreateUserInput struct {

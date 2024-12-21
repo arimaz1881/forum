@@ -108,24 +108,6 @@ func (h *Handler) Routes() []Route {
 			Auth:    true,
 		},
 		{
-			Path:    "/posts/reaction",
-			Method:  http.MethodPost,
-			Handler: h.CreatePostAction,
-			Auth:    true,
-		},
-		{
-			Path:    "/comments",
-			Method:  http.MethodPost,
-			Handler: h.CreateComment,
-			Auth:    true,
-		},
-		{
-			Path:    "/comments/reaction",
-			Method:  http.MethodPost,
-			Handler: h.CreateCommentReaction,
-			Auth:    true,
-		},
-		{
 			Path:    "/auth/google/login",
 			Method:  http.MethodGet,
 			Handler: h.GoogleLogin,
@@ -150,9 +132,21 @@ func (h *Handler) Routes() []Route {
 			Auth:    false,
 		},
 		{
-			Path:    "/users/roles/submit",
-			Handler: h.SubmitRoleUpgrade,
+			Path:    "/posts/reaction",
 			Method:  http.MethodPost,
+			Handler: h.CreatePostAction,
+			Auth:    true,
+		},
+		{
+			Path:    "/comments",
+			Method:  http.MethodPost,
+			Handler: h.CreateComment,
+			Auth:    true,
+		},
+		{
+			Path:    "/comments/reaction",
+			Method:  http.MethodPost,
+			Handler: h.CreateCommentReaction,
 			Auth:    true,
 		},
 		{
@@ -189,6 +183,36 @@ func (h *Handler) Routes() []Route {
 			Path:    "/notification-look",
 			Handler: h.NotificationLook,
 			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/users/roles/submit",
+			Handler: h.SubmitRoleUpgrade,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/users/roles/moderator-waitlist",
+			Handler: h.GetWaitlistUsers,
+			Method:  http.MethodGet,
+			Auth:    true,
+		},
+		{
+			Path:    "/users/roles/submit/reject",
+			Handler: h.UpgradeRoleReject,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/users/roles/submit/approve",
+			Handler: h.UpgradeRoleApprove,
+			Method:  http.MethodPost,
+			Auth:    true,
+		},
+		{
+			Path:    "/users/roles/moderators-list",
+			Handler: h.GetModerators,
+			Method:  http.MethodGet,
 			Auth:    true,
 		},
 	}

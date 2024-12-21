@@ -7,7 +7,7 @@ CREATE TABLE users (
     email TEXT UNIQUE,
     hashed_password TEXT,
     role TEXT NOT NULL,
-    moderator_role_request BOOLEAN DEFAULT 'f'
+    moderator_role_request BOOLEAN DEFAULT 0
 );
 
 INSERT INTO
@@ -21,7 +21,7 @@ VALUES
     (
         'admin',
         'admin@main.com',
-        'todo:write_hash',
+        '$2a$06$hUqrbo4xhc3Rf5cLAneC1u1O9bRQ8tfV1VFPaWXKQVqTwkk.zUY2a',
         'admin'
     );
 

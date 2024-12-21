@@ -39,10 +39,17 @@ func (s *service) GetUserByToken(ctx context.Context, token string) (*GetUserByT
 		}, nil
 	}
 
+	var canSendRequest bool
+	if user.Role == "user" {
+		if !user.ModeratorRoleRequest {
+			canSendRequest = true
+		}
+	}
+
 	return &GetUserByTokenResponse{
 		ID:             session.UserID,
 		Role:           user.Role,
-		CanSendRequest: !user.ModeratorRoleRequest,
+		CanSendRequest: canSendRequest,
 		Login:			user.Login,
 	}, nil
 }

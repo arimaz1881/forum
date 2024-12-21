@@ -6,11 +6,12 @@
 <table>
   <tr>
     <th>Login</th>
-    <th>Title</th>
   </tr>
   {{range .Form}}
   <tr>
     <td>{{.Login}}</td>
+    <td><form method="post" id="upgrade-role", action="/users/roles/submit/reject?waiting_user_id={{.ID}}"><button type="submit">Reject</button></form></td>
+    <td><form method="post" id="upgrade-role", action="/users/roles/submit/approve?waiting_user_id={{.ID}}"><button type="submit">Approve</button></form></td>
   </tr>
   <tr class="spacer"></tr>
   {{end}}

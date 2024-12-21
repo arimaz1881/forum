@@ -21,6 +21,7 @@ func (s *service) SubmitRoleUpgrade(ctx context.Context, userID string) error {
 
 	return s.users.Update(ctx, domain.UpdateUserInput{
 		UserID:               user.ID,
+		Role:                 &user.Role,
 		ModeratorRoleRequest: &newModeratorRoleRequest,
 	})
 }

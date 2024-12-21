@@ -13,7 +13,7 @@ func (h *Handler) GetWaitlistUsers(w http.ResponseWriter, r *http.Request) {
 		user = getUserData(ctx)
 	)
 
-	usersWaitlist, err := h.svc.GetWaitlistUsers(ctx)
+	usersWaitlist, err := h.svc.GetWaitlistUsers(ctx, user.ID)
 	if err != nil {
 		e3r.ErrorEncoder(err, w, user)
 		return

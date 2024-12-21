@@ -42,9 +42,10 @@ type Service interface {
 
 	// moderator
 	SubmitRoleUpgrade(ctx context.Context, userID string) error
-	GetWaitlistUsers(ctx context.Context) ([]domain.User, error)
-	UpgradeRoleReject(ctx context.Context, input UpgradeRoleRejectInput) error
-	// UpgradeRoleApprove(ctx context.Context, input UpgradeRoleApproveInput)
+	GetWaitlistUsers(ctx context.Context, userID int64) ([]domain.User, error)
+	UpgradeRoleApprove(ctx context.Context, input UpgradeRoleInput) error
+	UpgradeRoleReject(ctx context.Context, input UpgradeRoleInput) error
+	GetModerators(ctx context.Context, userID int64) ([]domain.User, error)
 }
 
 type service struct {

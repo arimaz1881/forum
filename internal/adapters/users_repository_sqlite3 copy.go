@@ -6,8 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"forum/internal/domain"
+	"forum/internal/pkg/e3r"
 )
 
 type UsersRepositorySqlite3 struct {
@@ -96,6 +98,9 @@ VALUES
 `
 
 func (q *UsersRepositorySqlite3) OAuthFindOrCreateUser(ctx context.Context, input domain.GoogleAuthInput) (int64, error) {
+	if input.Email == "" {
+		input.Email = fmt.Sprintf("%d", time.Now().UnixNano())
+	}
 	var userID int64
 	err := q.db.QueryRowContext(ctx, OAuthGetUser, input.Provider, input.OAuthID).Scan(&userID)
 	if err == sql.ErrNoRows {
@@ -149,35 +154,55 @@ func (q *UsersRepositorySqlite3) GetWaitlist(ctx context.Context) ([]domain.User
 const updateUserQuery = `
 UPDATE users
 SET 
-    %s
+  role = ?, moderator_role_request = ?
 WHERE id = ?
 `
 
 func (q *UsersRepositorySqlite3) Update(ctx context.Context, input domain.UpdateUserInput) error {
-	var (
-		setClauses []string
-		args       []interface{}
-	)
 
-	if input.Role != nil {
-		setClauses = append(setClauses, "role = ?")
-		args = append(args, *input.Role)
+	if input.Role == nil {
+		return e3r.New("invalid role", 400)
 	}
-	if input.ModeratorRoleRequest != nil {
-		setClauses = append(setClauses, "moderator_role_request = ?")
-		args = append(args, *input.ModeratorRoleRequest)
+	if input.ModeratorRoleRequest == nil {
+		return e3r.New("invalid moderator role request", 400)
+	}
+	fmt.Println(*input.Role, *input.ModeratorRoleRequest, input.UserID)
+	if _, err := q.db.ExecContext(ctx, updateUserQuery, *input.Role, *input.ModeratorRoleRequest, input.UserID); err != nil {
+		return err
 	}
 
-	if len(setClauses) == 0 {
-		return errors.New("no fields to update")
+	return nil
+}
+
+const getModerators = `
+SELECT
+  id, login 
+FROM
+  users
+WHERE
+	role = ?
+`
+
+func (q *UsersRepositorySqlite3) GetModerators(ctx context.Context) ([]domain.User, error) {
+	rows, err := q.db.QueryContext(ctx, getModerators, domain.RoleModerator)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []domain.User
+
+	for rows.Next() {
+		var user domain.User
+		err := rows.Scan(
+			&user.ID,
+			&user.Login,
+		)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, domain.ErrUserNotFound
+		}
+		users = append(users, user)
 	}
 
-	// Формируем итоговый запрос
-	query := fmt.Sprintf(updateUserQuery, strings.Join(setClauses, ", "))
-
-	// Добавляем ID в конец аргументов
-	args = append(args, input.UserID)
-
-	_, err := q.db.ExecContext(ctx, query, args...)
-	return err
+	return users, err
 }

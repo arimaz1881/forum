@@ -36,10 +36,11 @@ DO UPDATE SET
 
 func (q *PostReactionsRepositorySqlite3) Create(ctx context.Context, input domain.CreatePostReactionInput) (reactionID int64, err error) {
 	row := q.db.QueryRowContext(ctx, createPostReaction, input.PostID, input.UserID, input.Action)
+	
+	err = row.Scan(&reactionID)
 	if err != nil {
         return 0, err
     }
-	err = row.Scan(&reactionID)
 	return reactionID, err
 }
 

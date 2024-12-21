@@ -163,14 +163,28 @@ nav div {
     float: left;
 }
 
-nav div:last-child {
+nav div:nth-child(1) {
+    width: 70%; /* Left div: 70% of the parent width */
+    float: left;
+    display: flex; 
+
+}
+
+nav div:nth-child(2) {
+    width: 30%; /* Right div: 30% of the parent width */
+    float: left;
+}
+
+/* nav div:last-child {
+    width: 30%;
     text-align: right;
 }
 
 nav div:first-child {
+    width: 70%;
     text-align: right;
     display: flex; 
-}
+} */
 
 nav div:last-child a {
     margin-left: 1.5em;
